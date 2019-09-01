@@ -42,7 +42,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="商品描述" label-width="120px">
-          <editor :catchData="editorData" :content="productForm.describe"/>
+          <el-input v-model="productForm.describe" type="textarea" autosize auto-complete="off"></el-input>
         </el-form-item>
         
         <el-form-item label="商品分类" label-width="120px">
@@ -95,10 +95,9 @@ import {
 } from "./api";
 import request from '@/plugin/axios';
 import { mapState, mapActions } from "vuex";
-import editor from '@/components/EditorBar';
 let uploadUrl=process.env.NODE_ENV=="development"?'/wxcloud':"https://cos.ap-shanghai.myqcloud.com";
 export default {
-  name: "page2",
+  name: "page10",
   data() {
     return {
       listFormVisible: false,
@@ -112,7 +111,6 @@ export default {
       fileList:[]
     };
   },
-  components:{editor},
   computed: {
     ...mapState({
       wxToken: state => state.d2admin.account.wxToken
@@ -239,9 +237,6 @@ export default {
         this.chargeForm = {};
         await this.loadData();
       }
-    },
-    editorData(data){
-      Object.assign(this.productForm,{describe:data})
     }
   }
 };

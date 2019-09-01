@@ -1,7 +1,6 @@
 ﻿<template>
   <d2-container>
-    <template slot="header">
-      会员列表
+    <template slot="header">会员列表
       <el-button style="float:right" @click="dialogFormVisible=true">新增</el-button>
       <span style="float:right;width:300px;margin-right:20px">
         <el-input v-model="serachPhone">
@@ -106,7 +105,7 @@
     <el-dialog title="费用记录" :visible.sync="feeTabVisible" :before-close="handleTabClose">
       <el-tabs v-model="activeName" @tab-click="handleTabClick">
         <el-tab-pane label="充值记录" name="first">
-          <el-table :data="chargeList" border style="width: 100%">
+          <el-table :data="chargeList" border="" style="width: 100%">
             <el-table-column prop="charge" label="充值金额" width="180"></el-table-column>
             <el-table-column
               prop="chargeTime"
@@ -116,7 +115,7 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="消费记录" name="second">
-          <el-table :data="tradeList" border style="width: 100%">
+          <el-table :data="tradeList" border="" style="width: 100%">
             <el-table-column prop="userId" label="消费人" :formatter="userFormat"></el-table-column>
             <el-table-column prop="tradeTime" label="消费时间" :formatter="timeFormat"></el-table-column>
             <el-table-column prop="productId" label="商品名称" :formatter="productFormat"></el-table-column>
@@ -124,11 +123,16 @@
             <el-table-column prop="truePrice" label="成交价格"></el-table-column>
             <el-table-column prop="listId" :formatter="listFormat" label="商品分类"></el-table-column>
             <el-table-column prop="remark" label="备注"></el-table-column>
+            <el-table-column label="操作" width="180">
+              <template slot-scope="scope">
+                <el-button size="mini" @click="deleteAndBack(scope.row._id)">删除并回退</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
-    <el-table :data="tableDataWithSerch" border style="width: 100%">
+    <el-table :data="tableDataWithSerch" border="" style="width: 100%">
       <el-table-column prop="trueName" label="姓名" width="180"></el-table-column>
       <el-table-column prop="sex" :formatter="sexFormat" label="性别" width="180"></el-table-column>
       <el-table-column
@@ -165,7 +169,8 @@ import {
   getTrade,
   getProductList,
   getProduct,
-  addTrade
+  addTrade,
+  deleteTrade
 } from "./api";
 import { mapState, mapActions } from "vuex";
 export default {
@@ -221,18 +226,12 @@ export default {
       return cellValue == "normal"
         ? "非会员"
         : cellValue == "vip"
-        ? "普通会员"
-        : "至尊vip";
+          ? "普通会员"
+          : "至尊vip";
     },
     async loadData() {
-      let token;
-      if (!this.wxToken) {
-        token = await this.getwxToken();
-      } else {
-        token = this.wxToken;
-      }
+      let token = this.wxToken;
       let data = await getUser(token);
-      console.log(data);
       this.tableData = JSON.parse(data.resp_data).res.data;
       this.tableDataWithSerch = this.tableData;
       let productData = await getProduct(token);
@@ -252,6 +251,15 @@ export default {
       this.tradeForm = Object.assign({}, this.tradeForm, {
         userId: id
       });
+    },
+    async deleteAndBack(id){
+      let res=await deleteTrade({
+        token:this.wxToken,
+        id
+      });
+      if(res.errcode==0){
+        await this.loadData();
+      }
     },
     async addTrade() {
       this.tradeFormVisible = false;
@@ -273,11 +281,13 @@ export default {
     handleTabClose(done) {
       this.currentId = "";
       this.activeName = "first";
+      this.chargeList = [];
+      this.tradeList = [];
       done();
     },
     serch() {
       this.tableDataWithSerch = this.tableData.filter(
-        item => item.phone.indexOf(this.serachPhone) >= 0
+        item => (item.phone ? item.phone.indexOf(this.serachPhone) >= 0 : false)
       );
     },
     async add() {

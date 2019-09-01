@@ -16,10 +16,14 @@ module.exports = {
   lintOnSave: true,
   devServer: {
     proxy:{
+      '/wxcloud':{
+        target:'https://cos.ap-shanghai.myqcloud.com',
+        pathRewrite:{'^/wxcloud':''}
+      },
       '/wx':{
         target:'https://api.weixin.qq.com',
         pathRewrite:{'^/wx':''}
-      }
+      },
     }
   },
   css: {

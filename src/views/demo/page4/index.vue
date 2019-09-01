@@ -44,12 +44,7 @@ export default {
   methods: {
     ...mapActions("d2admin/account", ["getwxToken"]),
     async loadData() {
-      let token;
-      if (!this.wxToken) {
-        token = await this.getwxToken();
-      } else {
-        token = this.wxToken;
-      }
+      let token= this.wxToken;
       let data=await getUserFromWx(token);
       this.tableData=JSON.parse(data.resp_data).res.data;
     },

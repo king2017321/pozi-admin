@@ -62,6 +62,11 @@
       <el-table-column prop="truePrice" label="成交价格"></el-table-column>
       <el-table-column prop="listId" :formatter="listFormat" label="商品分类"></el-table-column>
       <el-table-column prop="remark" label="备注"></el-table-column>
+      <el-table-column label="操作" width="180">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="deleteAndBack(scope.row._id)">删除并回退</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </d2-container>
 </template>
@@ -73,7 +78,8 @@ import {
   getProduct,
   getUser,
   getTrade,
-  addTrade
+  addTrade,
+  deleteTrade
 } from "./api";
 import { mapState, mapActions } from "vuex";
 export default {
@@ -134,12 +140,7 @@ export default {
       return this.user.find(item => item._id == cellValue).trueName;
     },
     async loadData() {
-      let token;
-      if (!this.wxToken) {
-        token = await this.getwxToken();
-      } else {
-        token = this.wxToken;
-      }
+      let token= this.wxToken;
       let userData = await getUser(token);
       this.user = JSON.parse(userData.resp_data).res.data;
       console.log(this.user);
@@ -150,6 +151,15 @@ export default {
       let tradeData = await getTrade(token);
       this.tableData = JSON.parse(tradeData.resp_data).res.data;
       console.log(this.tableData);
+    },
+    async deleteAndBack(id){
+      let res=await deleteTrade({
+        token:this.wxToken,
+        id
+      });
+      if(res.errcode==0){
+        await this.loadData();
+      }
     },
     async addTrade() {
       this.tradeFormVisible = false;

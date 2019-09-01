@@ -13,13 +13,14 @@ export function AccountLogin (data) {
   })
   
 };
+let basurl=process.env.NODE_ENV=="development"?'/wx':"https://api.weixin.qq.com"
 export const getToken=()=>{
   return request({
-      url:'/wx/cgi-bin/token?grant_type=client_credential&appid=wx77b72750d6dd14e5&secret=f3139fb838c3bb76ed05758b5e2e294e'
+      url:`${basurl}/cgi-bin/token?grant_type=client_credential&appid=wx77b72750d6dd14e5&secret=f3139fb838c3bb76ed05758b5e2e294e`
   })
 };
 export const getUser=(data)=>{
   return request({
-      url:`/wx/tcb/invokecloudfunction?access_token=${data}&env=fayuandi-v1&name=getUser`
+      url:`${basurl}/tcb/invokecloudfunction?access_token=${data}&env=fayuandi-v1&name=getUser`
   })
 }

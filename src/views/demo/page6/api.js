@@ -1,4 +1,4 @@
-import request from '@/plugin/axios';
+import request from '@/plugin/axios'
 let basurl=process.env.NODE_ENV=="development"?'/wx':"https://api.weixin.qq.com"
 export const getToken=()=>{
     return request({

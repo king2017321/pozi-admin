@@ -27,7 +27,8 @@ const frameIn = [
         name: 'page1',
         meta: {
           title: '会员列表',
-          auth: true
+          auth: true,
+          cache:true
         },
         component: _import('demo/page1')
       },
@@ -36,7 +37,8 @@ const frameIn = [
         name: 'page2',
         meta: {
           title: '商品列表',
-          auth: true
+          auth: true,
+          cache:true
         },
         component: _import('demo/page2')
       },
@@ -45,7 +47,8 @@ const frameIn = [
         name: 'page3',
         meta: {
           title: '消费记录',
-          auth: true
+          auth: true,
+          cache:true
         },
         component: _import('demo/page3')
       },
@@ -54,9 +57,70 @@ const frameIn = [
         name: 'page4',
         meta: {
           title: '需确认绑定记录',
-          auth: true
+          auth: true,
+          cache:true
         },
         component: _import('demo/page4')
+      },
+      {
+        path: 'page5',
+        name: 'page5',
+        meta: {
+          title: '首页设置',
+          auth: true,
+          cache:true
+        },
+        component: _import('demo/page5')
+      },
+      {
+        path: 'page6',
+        name: 'page6',
+        meta: {
+          title: '首页设置',
+          auth: true,
+          cache:true
+        },
+        component: _import('demo/page6')
+      },
+      {
+        path: 'page7',
+        name: 'page7',
+        meta: {
+          title: '活动列表',
+          auth: true,
+          cache:true
+        },
+        component: _import('demo/page7')
+      },
+      {
+        path: 'page8',
+        name: 'page8',
+        meta: {
+          title: '发型师管理',
+          auth: true,
+          cache:true
+        },
+        component: _import('demo/page8')
+      },
+      {
+        path: 'page9',
+        name: 'page9',
+        meta: {
+          title: '首页设置',
+          auth: true,
+          cache:true
+        },
+        component: _import('demo/page9')
+      },
+      {
+        path: 'page10',
+        name: 'page10',
+        meta: {
+          title: '首页设置',
+          auth: true,
+          cache:true
+        },
+        component: _import('demo/page10')
       },
       // 系统 前端日志
       {

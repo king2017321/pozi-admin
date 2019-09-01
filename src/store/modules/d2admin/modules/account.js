@@ -2,22 +2,21 @@ import { Message, MessageBox } from 'element-ui'
 import util from '@/libs/util.js'
 import router from '@/router'
 import M from 'moment';
-import { AccountLogin ,getToken,getUser} from '@api/sys.login'
+import { AccountLogin, getToken, getUser } from '@api/sys.login'
 
 export default {
   namespaced: true,
-  state:{
-    wxToken:'',
-    timeID:'',
-    expire:""
+  state: {
+    wxToken: '',
+    timeID: '',
+    expire: ""
   },
-  mutations:{
-    updateToken(state,{token,expire}){
-      state.wxToken=token;
-      state.expire=expire
+  mutations: {
+    updateToken(state, { token }) {
+      state.wxToken = token;
     },
-    updateTimeID(state,ID){
-      state.timeID=ID;
+    updateTimeID(state, ID) {
+      state.timeID = ID;
     }
   },
   actions: {
@@ -28,26 +27,15 @@ export default {
      * @param {Object} param password {String} 密码
      * @param {Object} param route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
      */
-    getwxToken({dispatch,commit,state}){
-      return new Promise((resolve,reject)=>{
-        if(util.cookies.get('wxToken')){
-          commit('updateToken',{token:util.cookies.get('wxToken')});
-          resolve(util.cookies.get('wxToken'))
-        }else{
-          getToken().then(res=>{
-            let date=new new Date().getTime();
-            commit('updateToken',{token:res.access_token,expire:new Date(date+7000*1000)});
-            util.cookies.set('wxToken',res.access_token,{expires:new Date(date+7000*1000)});
-            resolve(res.access_token)
-          });
-        };
-        let timeID=setTimeout(()=>{
-          dispatch('d2admin/account/getwxToken')
-        },7000*1000);
-        commit("updateTimeID",timeID);
-      });
+    async getwxToken({ dispatch, commit, state }) {
+        let res =await getToken();
+        commit('updateToken', { token: res.access_token});
+        let timeID = setTimeout(() => {
+          dispatch('getwxToken')
+        }, (Number(res.expires_in)-100)*1000);
+        commit("updateTimeID", timeID);
     },
-    login ({ dispatch }, {
+    login({ dispatch }, {
       username = '',
       password = ''
     } = {}) {
@@ -85,19 +73,19 @@ export default {
      * @param {Object} param context
      * @param {Object} param confirm {Boolean} 是否需要确认
      */
-    logout ({ commit, dispatch, state}, { confirm = false } = {}) {
+    logout({ commit, dispatch, state }, { confirm = false } = {}) {
       /**
        * @description 注销
        */
-      async function logout () {
+      async function logout() {
         // 删除cookie
         util.cookies.remove('token')
         util.cookies.remove('uuid');
         // 清空 vuex 用户信息
         await dispatch('d2admin/user/set', {}, { root: true });
-        if(state.timeID){
+        if (state.timeID) {
           clearTimeout(state.timeID);
-          commit("updateTimeID","");
+          commit("updateTimeID", "");
         }
         // 跳转路由
         router.push({
@@ -130,7 +118,7 @@ export default {
      * @description 用户登录后从持久化数据加载一系列的设置
      * @param {Object} state vuex state
      */
-    load ({ dispatch }) {
+    load({ dispatch }) {
       return new Promise(async resolve => {
         // DB -> store 加载用户名
         await dispatch('d2admin/user/load', null, { root: true })
